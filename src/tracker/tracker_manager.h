@@ -117,7 +117,7 @@ private:
   bool save_videos_;
 };
 
-class TrackerTesterVisdrone : TrackerManager{
+class TrackerTesterVisdrone : public TrackerManager{
 public:
   TrackerTesterVisdrone(const std::vector<Video>& videos,
                         const bool save_videos,
