@@ -109,7 +109,7 @@ target_link_libraries (test_tracker_alov ${PROJECT_NAME})
 
 add_executable (test_tracker_visdrone src/test/test_tracker_visdrone.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Caffe_LIBRARIES} ${GLOG_LIB})
-target_link_libraries (test_tracker_alov ${PROJECT_NAME})
+target_link_libraries (test_tracker_visdrone ${PROJECT_NAME})
 
 add_executable (save_videos_vot src/test/save_videos_vot.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} ${Caffe_LIBRARIES} ${GLOG_LIB})
