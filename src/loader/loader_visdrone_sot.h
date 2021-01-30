@@ -1,5 +1,5 @@
-#ifndef LOADER_ALOV_H
-#define LOADER_ALOV_H
+#ifndef LOADER_VISDRONE_SOT_H
+#define LOADER_VISDRONE_SOT_H
 
 #include <vector>
 #include <string>
@@ -33,4 +33,4 @@ private:
   std::vector<Category> categories_;
 };
 
-#endif // LOADER_ALOV_H
+#endif

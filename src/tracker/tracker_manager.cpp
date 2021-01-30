@@ -209,3 +209,101 @@ void TrackerTesterAlov::PostProcessAll() {
   const double mean_time_ms = total_ms_ / num_frames_;
   printf("Mean time: %lf ms\n", mean_time_ms);
 }
+
+TrackerTesterVisdrone::TrackerTesterVisdrone(const std::vector<Video>& videos,
+                                     const bool save_videos,
+                                     RegressorBase* regressor, Tracker* tracker,
+                                     const std::string& output_folder):
+TrackerManager(videos, regressor, tracker),
+output_folder_(output_folder),
+hrt_("Tracker"),
+total_ms_(0),
+num_frames_(0),
+save_videos_(save_videos)
+{
+}
+
+void TrackerTesterVisdrone::VideoInit(const Video& video, const size_t video_num){
+  // Get the name of the video from the video file path.
+  int delim_pos = video.path.find_last_of("/");
+  const string& video_name = video.path.substr(delim_pos+1, video.path.length());
+  printf("Video %zu: %s\n", video_num + 1, video_name.c_str());
+
+  // Open a file for saving the tracking output.
+  const string& output_file = output_folder_ + "/" + video_name;
+  output_file_ptr_ = fopen(output_file.c_str(), "w");
+
+  if (save_videos_) {
+    // Make a folder to save the tracking videos.
+    const string& video_out_folder = output_folder_ + "/videos";
+    boost::filesystem::create_directories(video_out_folder);
+
+    // Get the size of the images that will be saved.
+    cv::Mat image;
+    BoundingBox box;
+    video.LoadFrame(0, false, false, &image, &box);
+
+    // Open a video_writer object to save the tracking videos.
+    const string video_out_name = video_out_folder + "/Video" + num2str(static_cast<int>(video_num)) + ".avi";
+    video_writer_.open(video_out_name, CV_FOURCC('M','J','P','G'), 50, image.size());
+  }
+}
+
+void TrackerTesterVisdrone::SetupEstimate(){
+  // Record the time before starting to track.
+  hrt_.reset();
+  hrt_.start();
+}
+
+void TrackerTesterVisdrone::ProcessTrackOutput(
+      const size_t frame_num, const cv::Mat& image_curr, const bool has_annotation,
+      const BoundingBox& bbox_gt, const BoundingBox& bbox_estimate,
+      const int pause_val){
+  // Stop the timer and print the time needed for tracking.
+  hrt_.stop();
+  const double ms = hrt_.getMilliseconds();
+
+  // Update the total time needed for tracking.  (Other time is used to save the tracking
+  // output to a video and to write tracking data to a file for evaluation purposes).
+  total_ms_ += ms;
+  num_frames_++;
+
+  // Get the tracking output.
+  const double width = fabs(bbox_estimate.get_width());
+  const double height = fabs(bbox_estimate.get_height());
+  const double x_min = std::min(bbox_estimate.x1_, bbox_estimate.x2_);
+  const double y_min = std::min(bbox_estimate.y1_, bbox_estimate.y2_);
+
+  // Save the trackign output to a file inthe appropriate format for the ALOV dataset.
+  fprintf(output_file_ptr_, "%zu %lf %lf %lf %lf\n", frame_num + 1, x_min, y_min, width,
+          height);
+
+  if (save_videos_) {
+    cv::Mat full_output;
+    image_curr.copyTo(full_output);
+
+    if (has_annotation) {
+      // Draw ground-truth bounding box (white).
+      bbox_gt.DrawBoundingBox(&full_output);
+    }
+
+    // Draw estimated bounding box on image (red).
+    bbox_estimate.Draw(255, 0, 0, &full_output);
+
+    // Save the image to a tracking video.
+    video_writer_.write(full_output);
+  }
+}
+
+void TrackerTesterVisdrone::PostProcessVideo() {
+  // Close the file that saves the tracking data.
+  fclose(output_file_ptr_);
+}
+
+void TrackerTesterVisdrone::PostProcessAll() {
+  printf("Finished tracking %zu videos with %d total frames\n", videos_.size(), num_frames_);
+
+  // Compute the mean tracking time per frame.
+  const double mean_time_ms = total_ms_ / num_frames_;
+  printf("Mean time: %lf ms\n", mean_time_ms);
+}
