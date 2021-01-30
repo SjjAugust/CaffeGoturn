@@ -50,12 +50,12 @@ LoaderVisdroneSot::LoaderVisdroneSot(const string& video_folder, const string& a
         anno_name.substr(0, anno_name.length() - 4);
     video.path = video_path;
 
-    printf("video_path: %s", video.path.c_str());
+    printf("video_path: %s\n", video.path.c_str());
 
     // Add all image files
     const boost::regex image_filter(".*\\.jpg");
     find_matching_files(video_path, image_filter, &video.all_frames);
-    printf("video %s has %d frames", anno_name.substr(0, anno_name.length() - 4).c_str(), video.all_frames.size());
+    printf("video %s has %d frames\n", anno_name.substr(0, anno_name.length() - 4).c_str(), video.all_frames.size());
 
     // Open the annotation file.
     const string& annotation_file_path = annotations_folder + "/" + anno_name;
@@ -103,10 +103,10 @@ void LoaderVisdroneSot::get_videos(const bool get_train, std::vector<Video>* vid
     // Number of videos in this category.
     size_t num_videos = category.videos.size();
 
-    // Number of videos from this category to use in the validation set (the rest go into the training set).
+    // Number of videos from this category to use in the validation set (the rest go into the training set).0
     const int num_val = static_cast<int>(val_ratio * num_videos);
 
-    // Number of videos from this category to use in the training set.
+    // Number of videos from this category to use in the training set.1
     const int num_train = num_videos - num_val;
 
     int start_num;

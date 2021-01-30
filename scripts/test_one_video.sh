@@ -16,7 +16,7 @@ fi
 GPU_ID=0
 
 # Whether to evaluate on the training set or the validation set,always 0
-USE_TRAIN=0
+USE_TRAIN=1
 
 # Whether or not to save videos of the tracking output,always 1
 SAVE_VIDEOS=1
