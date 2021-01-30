@@ -159,6 +159,6 @@ private:
 
   // Whether to save tracking videos.  Videos take up a lot of space, so use this only when needed.
   bool save_videos_;
-}
+};
 
 #endif // TRACKER_MANAGER_H
