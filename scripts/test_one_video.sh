@@ -1,12 +1,12 @@
 #!/bin/bash
 
-if[$# != 4]
+if [ $# != 4 ]
     then
     echo "Usage: sh basename/$0 video_folder annotations_floder caffe_model output_folder"
     exit
 fi
 
-if[-z $1]
+if [ -z $1 ]
     then
         echo "No folder supplied!"
         echo "Usage: sh basename/$0 video_folder annotations_floder caffe_model output_folder"
