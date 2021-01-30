@@ -50,9 +50,12 @@ LoaderVisdroneSot::LoaderVisdroneSot(const string& video_folder, const string& a
         anno_name.substr(0, anno_name.length() - 4);
     video.path = video_path;
 
+    printf("video_path: %s", video.path.c_str());
+
     // Add all image files
     const boost::regex image_filter(".*\\.jpg");
     find_matching_files(video_path, image_filter, &video.all_frames);
+    printf("video %s has %d frames", anno_name.substr(0, anno_name.length() - 4).c_str(), video.all_frames.size());
 
     // Open the annotation file.
     const string& annotation_file_path = annotations_folder + "/" + anno_name;

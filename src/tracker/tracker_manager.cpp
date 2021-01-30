@@ -33,6 +33,7 @@ void TrackerManager::TrackAll(const size_t start_video_num, const int pause_val)
     cv::Mat image_curr;
     BoundingBox bbox_gt;
     video.LoadFirstAnnotation(&first_frame, &image_curr, &bbox_gt);
+    bbox_gt.Print();
 
     // Initialize the tracker.
     tracker_->Init(image_curr, bbox_gt, regressor_);
